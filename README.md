@@ -55,4 +55,4 @@
 
 برای ارسال پیشنهاد، انتقاد یا گزارش خطا:
 
-`realmadrid121925@outlook.com`
+`alireza.mohamadifar4045@gmail.com`
