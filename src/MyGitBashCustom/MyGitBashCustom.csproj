@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>MyGitBashCustom</AssemblyName>
+    <RootNamespace>MyGitBashCustom</RootNamespace>
+    <Version>1.2.0</Version>
+    <Authors>MyGitBashCustom</Authors>
+    <Description>ترمینال فارسی پیشرفته Git Bash — اینتلیسنس، رنگ‌بندی نحوی، آمار و لاگ حرفه‌ای</Description>
+    <ApplicationIcon>Assets\MyGitBashCustom.ico</ApplicationIcon>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DefineConstants>$(DefineConstants)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\MyGitBashCustom.ico" />
+    <Resource Include="Assets\MyGitBashCustom.png" />
+  </ItemGroup>
+
+</Project>

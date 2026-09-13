@@ -1,0 +1,126 @@
+<UserControl x:Class="MyGitBashCustom.Views.TerminalView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:h="clr-namespace:MyGitBashCustom.Helpers"
+             FlowDirection="RightToLeft" Background="Transparent">
+  <UserControl.Resources>
+    <h:BoolToVis x:Key="B2V"/>
+    <h:InvBoolToVis x:Key="IB2V"/>
+  </UserControl.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <Border Grid.Row="0" Background="#3A2A10" BorderBrush="#8A6D1B" BorderThickness="1" CornerRadius="10" Padding="12,9"
+            Visibility="{Binding EngineReady, Converter={StaticResource IB2V}}" Margin="0,0,0,10">
+      <TextBlock Text="⚠ موتور Bash این تب روشن نیست. «بررسی مجدد» را بزنید یا Git Bash را نصب کنید." Foreground="#FFD479" FontSize="12.5"/>
+    </Border>
+
+    <Border Grid.Row="1" Background="#0A0E14" BorderBrush="{StaticResource Border}" BorderThickness="1" CornerRadius="12" Padding="4">
+      <ListBox x:Name="OutputList" ItemsSource="{Binding Lines}" FlowDirection="LeftToRight"
+               ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
+               VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" Background="Transparent">
+        <ListBox.ContextMenu>
+          <ContextMenu FlowDirection="RightToLeft"
+                       DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+            <MenuItem Header="📋 کپی کل خروجی" Command="{Binding CopyOutputCommand}"/>
+            <MenuItem Header="🧹 پاک‌کردن صفحه" Command="{Binding ClearCommand}"/>
+          </ContextMenu>
+        </ListBox.ContextMenu>
+        <ListBox.ItemContainerStyle>
+          <Style TargetType="ListBoxItem">
+            <Setter Property="Padding" Value="8,1"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Focusable" Value="False"/>
+          </Style>
+        </ListBox.ItemContainerStyle>
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock x:Name="t" Text="{Binding Text}" FontFamily="Consolas, Cascadia Code" FontSize="13.5"
+                       Foreground="#C9D1D9" TextWrapping="Wrap"/>
+            <DataTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsCommand}" Value="True">
+                <Setter TargetName="t" Property="Foreground" Value="#58A6FF"/>
+                <Setter TargetName="t" Property="FontWeight" Value="Bold"/>
+              </DataTrigger>
+              <DataTrigger Binding="{Binding IsError}" Value="True">
+                <Setter TargetName="t" Property="Foreground" Value="#F85149"/>
+              </DataTrigger>
+              <DataTrigger Binding="{Binding IsSuccess}" Value="True">
+                <Setter TargetName="t" Property="Foreground" Value="#3FB950"/>
+              </DataTrigger>
+            </DataTemplate.Triggers>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Border>
+
+    <!-- پیشنهادهای اینتلیسنس -->
+    <Border Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="8,0,8,8"
+            Background="{StaticResource Panel2}" BorderBrush="{StaticResource Accent}" BorderThickness="1" CornerRadius="10"
+            Visibility="{Binding IsSuggestOpen, Converter={StaticResource B2V}}" MaxHeight="220" FlowDirection="RightToLeft">
+      <ListBox ItemsSource="{Binding Suggestions}" SelectedIndex="{Binding SuggestIndex, Mode=TwoWay}"
+               Background="Transparent" BorderThickness="0" MaxHeight="210" x:Name="SuggestList">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Grid Margin="4">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <Border Background="{StaticResource Accent}" CornerRadius="6" Padding="7,2" Margin="0,0,8,0">
+                <TextBlock Text="{Binding Kind}" Foreground="White" FontSize="10.5"/>
+              </Border>
+              <TextBlock Grid.Column="1" Text="{Binding Display}" Foreground="{StaticResource Fg}" FontFamily="Consolas" FontSize="12.5" FlowDirection="LeftToRight" VerticalAlignment="Center"/>
+              <TextBlock Grid.Column="2" Text="{Binding Description}" Foreground="{StaticResource Muted}" FontSize="11" VerticalAlignment="Center" Margin="8,0,0,0"/>
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Border>
+
+    <!-- ورودی با رنگ‌بندی نحوی زنده -->
+    <Border Grid.Row="2" Background="{StaticResource Panel}" BorderBrush="{StaticResource Border}" BorderThickness="1" CornerRadius="12" Padding="10" Margin="0,10,0,0">
+      <Grid FlowDirection="LeftToRight">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="{Binding PromptSymbol, FallbackValue=❯}"
+                   Foreground="{StaticResource Green}" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,8,0" FlowDirection="LeftToRight"/>
+        <RichTextBox x:Name="InputBox" Grid.Column="1" MinHeight="30" MaxHeight="120"
+                     VerticalScrollBarVisibility="Auto" FontFamily="Consolas, Cascadia Code" FontSize="14"
+                     Background="Transparent" BorderThickness="0" AcceptsReturn="False">
+          <RichTextBox.InputBindings>
+            <KeyBinding Key="C" Modifiers="Ctrl+Shift" Command="ApplicationCommands.Copy"/>
+            <KeyBinding Key="V" Modifiers="Ctrl+Shift" Command="ApplicationCommands.Paste"/>
+          </RichTextBox.InputBindings>
+          <RichTextBox.ContextMenu>
+            <ContextMenu FlowDirection="RightToLeft">
+              <MenuItem Command="ApplicationCommands.Cut" Header="✂ برش"/>
+              <MenuItem Command="ApplicationCommands.Copy" Header="📋 کپی"/>
+              <MenuItem Command="ApplicationCommands.Paste" Header="📌 چسباندن"/>
+              <Separator/>
+              <MenuItem Command="ApplicationCommands.SelectAll" Header="انتخاب همه"/>
+            </ContextMenu>
+          </RichTextBox.ContextMenu>
+        </RichTextBox>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+          <Button Content="⏹ توقف" Style="{StaticResource GhostBtn}" Command="{Binding StopCommand}"
+                  Visibility="{Binding IsBusy, Converter={StaticResource B2V}}" Margin="0,0,6,0" Foreground="#F85149"/>
+          <Button Content="اجرا ⏎" Style="{StaticResource AccentBtn}" Command="{Binding ExecuteCommand}" Padding="18,7"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="2,8,2,0" FlowDirection="RightToLeft">
+      <Button Content="🧹 پاک‌کردن" Style="{StaticResource GhostBtn}" Command="{Binding ClearCommand}" Margin="0,0,8,0"/>
+      <Button Content="📋 کپی آخرین دستور" Style="{StaticResource GhostBtn}" Command="{Binding CopyLastCommand}" Margin="0,0,8,0"/>
+      <TextBlock Foreground="{StaticResource Muted}" FontSize="11" VerticalAlignment="Center" TextWrapping="Wrap">
+        <Run Text="میانبرها: "/><Run Text="Enter اجرا • Tab پذیرش پیشنهاد • ↑/↓ تاریخچه • Ctrl+C توقف فرایند • Ctrl+Shift+C کپی • Ctrl+Shift+V چسباندن • Ctrl+L پاک‌کردن"/>
+      </TextBlock>
+    </StackPanel>
+  </Grid>
+</UserControl>

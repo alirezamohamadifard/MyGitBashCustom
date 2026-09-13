@@ -1,0 +1,19 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# .NET build
+**/bin/
+**/obj/
+atrifacts/
+publish/
+
+# Runtime data
+**/data/
+**/log/
+*.log
+
+# OS
+Thumb.db
+Desktop.ini
